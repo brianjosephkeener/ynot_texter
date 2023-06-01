@@ -1,0 +1,9 @@
+{
+    "Username" : "bkeener",
+    "Password" : "Letmein1986!",
+    "Location" : ["Deland", "Kissimme", "Lakeland", "Orlando", "Pembroke Pines", "South Miami", "Online", "Tampa"],
+    "Content" : "Hello ${username} this is brian",
+    "DateRange" : "01/01/2010 to 01/01/2023",
+    "LeadStatus" : ["Appt No Show", "Appt No Show AC", "Cancel", "Contacted", "Interviewed", "Withdrawal", "Graduate", "Appointment Set", "Lead"],
+    "Programs" : ["Medical Billing and Coding Specialist - Diploma", "Medical Assistant Technician", "Allied Health Management", "Computer Support Technician", "Business Office Specialist", "Information Technology with Emphasis in Cyber Security", "Business Administration"]
+}
