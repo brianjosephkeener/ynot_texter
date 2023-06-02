@@ -18,6 +18,8 @@ namespace ynot_texter
         options.AddArgument("--inprivate");
         EdgeDriver driver = new EdgeDriver(options);
 
+        driver.Manage().Window.Size = new System.Drawing.Size(1200, 1200);
+
         WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(84000));
         IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
 
@@ -26,7 +28,8 @@ namespace ynot_texter
 
         Controller c = new Controller(options, driver, wait, data);
         c.Login();
-
+        c.Filter();
+        c.Repeater();
         }
     }
 }
