@@ -31,7 +31,7 @@ class Controller
         loginButton.Click();
 
         Thread.Sleep(1000);
-
+        driver.Navigate().GoToUrl("https://www.ynotlms.com/leads?&format=adrep#");
     }
     public void Filter()
     {
@@ -40,6 +40,7 @@ class Controller
         ClickFilterDropDown.Click();
 
         // Location
+
         IWebElement FilterByLocation = wait.Until(driver => driver.FindElement(By.Id("s2id_autogen3")));
         foreach (string item in data.Location)
         {
@@ -81,67 +82,167 @@ class Controller
     public void Text()
     {
         Thread.Sleep(1000);
-        IWebElement CaretDropDown = driver.FindElement(By.CssSelector(".btn.btn-xs.btn-inverse.dropdown-toggle"));
+        IWebElement CaretDropDown = null;
+        while (true)
+        {
+            try {
+                CaretDropDown = driver.FindElement(By.CssSelector(".btn.btn-xs.btn-inverse.dropdown-toggle"));
+                break;
+            }
+            catch (NoSuchElementException) 
+            {
+                Thread.Sleep(1000);
+            }
+            catch (ElementClickInterceptedException)
+            {
+                Thread.Sleep(1000);
+            }
+        }
+
         ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].scrollIntoView(true);", CaretDropDown);
         ((IJavaScriptExecutor)driver).ExecuteScript("window.scrollBy(0, -100);");
         CaretDropDown.Click();
 
+        // click the text button
         Thread.Sleep(1000);
-        IWebElement TextButton = wait.Until(driver => driver.FindElements(By.ClassName("text-number"))[0]);
+        IWebElement TextButton;
+        try {
+        TextButton = wait.Until(driver => driver.FindElements(By.ClassName("text-number"))[0]);
         TextButton.Click();
+        }
+        catch (ElementNotInteractableException ex)
+        {
+            Console.WriteLine(ex);
+            return;
+        }
 
+        // type in the text area
         Thread.Sleep(1000);
         IWebElement TextArea = wait.Until(driver => driver.FindElement(By.Id("sms_communication_text"))); 
         TextArea.SendKeys(data.Content);
+
+        // grab the correct "Send Text Message" Button 
+        Thread.Sleep(1000);
+        var sendTextButtonCollection = driver.FindElements(By.CssSelector(".btn.btn-success.btn-sm.pull-right"));
+        
+        IWebElement sendTextButton = null;
+        foreach (var element in sendTextButtonCollection)
+        {
+            if (element.Text == "Send Text Message")
+            {
+                sendTextButton = element;
+                break;
+            }
+        }
+        Console.WriteLine("Sent text");
+        sendTextButton.Click();
+
+        // Click OK pop-up 
+        Thread.Sleep(3000);
+        var okButtonCollection = driver.FindElements(By.CssSelector(".btn.btn-primary"));
+                
+                IWebElement okButton = null;
+                foreach (var element in okButtonCollection)
+                {
+                    if (element.Text == "OK")
+                    {
+                        okButton = element;
+                        break;
+                    }
+                }
+                while (true)
+                {
+                    try {
+                        okButton.Click(); // fix this try catch
+                        break;
+                    }
+                    catch (Exception){
+                        okButtonCollection = driver.FindElements(By.CssSelector(".btn.btn-primary"));
+                        foreach (var element in okButtonCollection)
+                        {
+                            if (element.Text == "OK")
+                            {
+                                okButton = element;
+                                break;
+                            }
+                        }
+                        Thread.Sleep(1000);
+                          }
+                }
     }
     public void SelectNextLead()
     {
         // currently selected lead
-        IWebElement initialElement = driver.FindElement(By.CssSelector(".list-group-item.lead-item.ng-scope.lead-detail-open"));
-        IWebElement nextChildElement = initialElement.FindElement(By.XPath("following-sibling::*[1]"));
+        IWebElement initialElement;
+        IWebElement nextChildElement;
+        // Sometimes the Lead detail open (with green highlight) does not go off properly
+        while (true)
+        {
+            try {
+                    initialElement = driver.FindElement(By.CssSelector(".list-group-item.lead-item.ng-scope.lead-detail-open"));
+                    nextChildElement = initialElement.FindElement(By.XPath("following-sibling::*[1]"));
+                    driver.ExecuteScript($"arguments[0].setAttribute('class', '{nextChildElement.GetAttribute("class")}');", initialElement);
+                    driver.ExecuteScript("arguments[0].setAttribute('class', 'list-group-item lead-item ng-scope lead-detail-open');", nextChildElement);
+                    break;
+                }
+                catch (NoSuchElementException){
+
+                Thread.Sleep(2000);
+                }
+        }
+        
         ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].scrollIntoView(true);", nextChildElement);
         ((IJavaScriptExecutor)driver).ExecuteScript("window.scrollBy(0, -100);");
         nextChildElement.Click();
     }
-    public bool CheckOptOut()
-    {
-    Thread.Sleep(1000);
-    Console.WriteLine("OptOut");
-    IWebElement tableElement = driver.FindElement(By.CssSelector(".table.table-striped.table-bordered.table-hover"));
-
-    // Find all elements under the table
-    var elements = tableElement.FindElements(By.CssSelector("*"));
-
-    // Iterate over the found elements and check if any of them contain the word "Opt-out"
+public bool CheckOptOut()
+{
     bool containsOptOut = false;
-    foreach (IWebElement element in elements)
+    bool containsDncFederal = false;
+
+    try
+    {
+        var elements = driver.FindElements(By.CssSelector("span.label.label-default.ng-binding.ng-scope"));
+
+        foreach (IWebElement element in elements)
         {
-            if (element.Text.Trim().Equals("Opt-out"))
+            string text = element.Text.Trim();
+            if ("Opt-Out" == text)
             {
                 containsOptOut = true;
                 break;
             }
+            else if ("DNC Federal" == text)
+            {
+                containsDncFederal = true;
+                break;
+            }
         }
-
-
-    return containsOptOut;
     }
+    catch (NoSuchElementException)
+    {
+        Console.WriteLine("Elements not found.");
+    }
+
+    // Print the result
+    // Console.WriteLine("Opt-Out: " + containsOptOut);
+    // Console.WriteLine("DNC Federal: " + containsDncFederal);
+
+    return containsOptOut || containsDncFederal;
+    }    
     public void Repeater()
     {
         int i = 0;
         try {
-            while (i < 100)
+            while (i < 100000)
             {
-                Console.WriteLine("Loop");
                 if(CheckOptOut())
                 {
                     SelectNextLead();
                     i++;
                     continue;
                 }
-                Thread.Sleep(1000);
                 Text();
-                Thread.Sleep(1000);
                 SelectNextLead();
                 i+=1;
             }            

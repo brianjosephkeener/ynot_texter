@@ -28,7 +28,7 @@ namespace ynot_texter
 
         Controller c = new Controller(options, driver, wait, data);
         c.Login();
-        c.Filter();
+        // c.Filter();
         c.Repeater();
         }
     }

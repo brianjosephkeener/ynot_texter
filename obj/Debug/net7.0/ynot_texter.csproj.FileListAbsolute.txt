@@ -40,3 +40,4 @@ C:\Users\brian\Desktop\ynot_texter\obj\Debug\net7.0\refint\ynot_texter.dll
 C:\Users\brian\Desktop\ynot_texter\obj\Debug\net7.0\ynot_texter.pdb
 C:\Users\brian\Desktop\ynot_texter\obj\Debug\net7.0\ynot_texter.genruntimeconfig.cache
 C:\Users\brian\Desktop\ynot_texter\obj\Debug\net7.0\ref\ynot_texter.dll
+C:\Users\root\Desktop\repo\ynot_texter\bin\Debug\net7.0\config.json

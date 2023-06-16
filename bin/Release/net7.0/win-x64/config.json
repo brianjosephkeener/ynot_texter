@@ -1,0 +1,9 @@
+{
+    "Username" : "USERNAME",
+    "Password" : "PASSWORD",
+    "Location" : ["Deland", "Kissimme", "Lakeland", "Orlando", "Pembroke Pines", "South Miami", "Online", "Tampa"],
+    "Content" : "Hello {$name},\n\nMy name is {$user_name} and I am an Admissions Representative for Florida Technical College.  We are now offering a Business Tech scholarship up to $4,800 towards any degree in business or IT programs.\n\nReply to schedule a call with me or get more information for you or another person you know who would benefit.",
+    "DateRange" : "01/01/2010 to 06/08/2023",
+    "LeadStatus" : ["Appt No Show", "Appt No Show AC", "Contacted", "Interviewed", "Appointment Set", "Lead"],
+    "Programs" : ["Medical Billing and Coding Specialist - Diploma", "Allied Health Management", "Computer Support Technician", "Business Office Specialist", "Information Technology with Emphasis in Cyber Security", "Business Administration"]
+}
